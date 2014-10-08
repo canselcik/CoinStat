@@ -15,6 +15,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        print "A websocket client connected"
         if self not in websockets:
             websockets.append(self)
 

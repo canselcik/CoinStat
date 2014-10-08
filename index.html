@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <script>
+      function onMessage(event){
+        console.log("Received: " + event.data);
+      }
+      function onOpen(){
+        console.log("Connection established");
+      }
+      function onError(event){
+        console.log("An error occurred with websockets");
+      }
+
+      function initialize(){
+        if ("WebSocket" in window == false){
+          alert("Your browser doesn't support WebSocket, cannot continue.")
+          return;
+        }
+        var ws = new WebSocket("ws://cselcik.com:8080/main")
+        ws.onopen = onOpen;
+        ws.onmessage = onMessage;
+        ws.onerror = onError;
+      }
+
+      initialize();
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
