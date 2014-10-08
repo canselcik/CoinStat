@@ -18,7 +18,6 @@ class Message:
         self.container['message_type'] = message_type
         self.container['message_content'] = message_content
         self.container['time'] = int(time.time())
-        pass
 
     def replace_container(self, new_container):
         self.container = new_container
