@@ -25,6 +25,7 @@ routing_key = ""
 
 class TwitterStreamListener(StreamListener):
     def __init__(self):
+        print "TwitterStreamListener started"
         self.counter = 0
         self.last_sent = time.time()
         self.producer = Producer(host, exchange, routing_type, routing_key)
@@ -49,6 +50,8 @@ class TwitterStreamListener(StreamListener):
         structured = json.loads(data)
         if 'text' not in structured:
             return True
+
+        print "Received tweet with keyword (counter=%d)" % self.counter
 
         #blob = TextBlob(structured['text'])
         #dur_sent = blob.sentiment.polarity
