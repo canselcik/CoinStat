@@ -2,16 +2,6 @@ import json
 import time
 
 
-def decode_message(string_representation):
-    try:
-        json_dict = json.loads(string_representation)
-        m = Message("", "")
-        m.replace_container(json_dict)
-        return m
-    except ValueError:
-        print "An error occured while decoding the incoming string"
-        return None
-
 class Message:
     def __init__(self, message_type, message_content):
         self.container = dict()
@@ -22,15 +12,21 @@ class Message:
     def replace_container(self, new_container):
         self.container = new_container
 
-    def add_field(self, field, val) :
-        if field in self.container : 
+    def add_field(self, field, val):
+        if field in self.container:
             return False
         else : 
             self.container[field] = val
             return True 
 
-    def get_field(self, field) :
-        if field not in self.container : 
+    def set_field(self, field, val):
+        if field not in self.container:
+            return False
+        self.container[field] = val
+        return True
+
+    def get_field(self, field):
+        if field not in self.container:
             return None
         return self.container[field]
 
@@ -52,3 +48,14 @@ class Message:
 
     def get_type(self):
         return self.get_field('message_type')
+
+
+def decode_message(string_representation):
+    try:
+        json_dict = json.loads(string_representation)
+        m = Message("", "")
+        m.replace_container(json_dict)
+        return m
+    except ValueError:
+        print "An error occurred while decoding the incoming string"
+        return None

@@ -1,6 +1,4 @@
-import puka
-
-'''
+"""
 Usage:
     # All arguments are strings
     p = Producer(host, exchange, routing_type, routing_key)
@@ -11,13 +9,15 @@ Usage:
 
     # When done, close connection
     p.disconnect()
-'''
+"""
+import puka
+
 
 class Producer:
-    def __init__(self, host, exchange='newsletter', type='fanout', routing_key=''):
+    def __init__(self, host, exchange='newsletter', etype='fanout', routing_key=''):
         self.host = host
         self.exchange = exchange
-        self.type = type
+        self.type = etype
         self.routing_key = routing_key
 
         self.producer = puka.Client(host)
