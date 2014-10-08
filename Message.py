@@ -15,12 +15,24 @@ def decode_message(string_representation):
 class Message:
     def __init__(self, message_type, message_content):
         self.container = dict()
-        self.container['message_type'] = message_type
-        self.container['message_content'] = message_content
-        self.container['time'] = int(time.time())
+        self.add_field('message_type', message_type)
+        self.add_field('message_content', message_content)
+        self.add_field('time', int(time.time()))
 
     def replace_container(self, new_container):
         self.container = new_container
+
+    def add_field(self, field, val) :
+        if field in self.container : 
+            return False
+        else : 
+            self.container[field] = val
+            return True 
+
+    def get_field(self, field) :
+        if field not in self.container : 
+            return None
+        return self.container[field]
 
     def str(self):
         if self.container is None:
@@ -33,16 +45,10 @@ class Message:
             return None
 
     def get_time(self):
-        if self.container is None or 'time' not in self.container:
-            return None
-        return self.container['time']
+        return self.get_field('time')
 
     def get_body(self):
-        if self.container is None or 'message_content' not in self.container:
-            return None
-        return self.container['message_content']
+        return self.get_field('message_content')
 
     def get_type(self):
-        if self.container is None or 'message_type' not in self.container:
-            return None
-        return self.container['message_type']
+        return self.get_field('message_type')

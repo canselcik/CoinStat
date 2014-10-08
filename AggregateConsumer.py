@@ -20,4 +20,10 @@ class AggregateConsumer:
     def message_handler(self, message):
         parsed = decode_message(message)
         if parsed is not None:
-            print "[%s] (%s) %s" % (parsed.get_time(), parsed.get_type(), parsed.get_body())
+            print "[%s] (%s) %s %s %s" % \
+                                   (parsed.get_field('time'),  \
+                                    parsed.get_field('message_type'),  \
+                                    parsed.get_field('message_content'),  \
+                                    parsed.get_field('pos_sent'), \
+                                    parsed.get_field('neg_sent') \
+            )
