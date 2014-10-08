@@ -6,7 +6,6 @@ import tornado.ioloop
 import tornado.web
 
 path = r'/main'
-
 websockets = []
 
 
@@ -27,23 +26,28 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 def transmit_all_clients(message):
+    print "Transmitting data to %d WS clients" % len(websockets)
     for ws in websockets:
         ws.write_message(message)
 
 
 class WSRelayConsumer:
     def __init__(self, host, exchange, ws_port, ws_path):
+        print "WSRelayConsumer starting"
         self.host = host
         self.exchange = exchange
         self.subscribe_object = None
 
         # Creating the WS server
-        application = tornado.web.Application([(ws_path, WSHandler)])
+        application = tornado.web.Application([(ws_path, WSHandler,)])
         http_server = tornado.httpserver.HTTPServer(application)
         http_server.listen(ws_port)
         tornado.ioloop.IOLoop.instance().start()
+        print "WSHandler started"
 
     def start_consuming(self):
+        print "Consuming from '%s'" % self.host
+
         if self.host is None or self.exchange is None:
             return False
         self.subscribe_object = Subscribe(self.host, self.message_handler, self.exchange)
@@ -53,6 +57,7 @@ class WSRelayConsumer:
         return self.subscribe_object
 
     def stop_consuming(self):
+        print "Stopping subscription"
         self.subscribe_object.stop()
 
     def message_handler(self, message):
