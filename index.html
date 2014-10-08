@@ -1,14 +1,20 @@
 <html>
   <head>
     <script>
+      function appendToDiv(divName, text){
+        var div = document.getElementById(divName);
+        if(div == null)
+          return;
+        div.innerHTML = div.innerHTML + "<p>" + text + "</p>";
+      }
       function onMessage(event){
-        console.log("Received: " + event.data);
+        appendToDiv("output", event.data);
       }
       function onOpen(){
-        console.log("Connection established");
+        appendToDiv("output", "Connection established");
       }
       function onError(event){
-        console.log("An error occurred with websockets");
+        appendToDiv("output", "An error occurred with websockets");
       }
 
       function initialize(){
@@ -26,5 +32,8 @@
     </script>
   </head>
   <body>
+    <div id="output" style="height:100%;width:100%;border:1px solid #ccc;overflow:auto;">
+      <p>Data will be displayed here as it is received...</p>
+    </div>
   </body>
 </html>
