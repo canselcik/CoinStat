@@ -3,6 +3,7 @@ from Message import *
 import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
+from threading import Thread
 import tornado.web
 
 path = r'/main'
@@ -37,21 +38,28 @@ class WSRelayConsumer:
         self.host = host
         self.exchange = exchange
         self.subscribe_object = None
-
-        # Creating the WS server
-        application = tornado.web.Application([(ws_path, WSHandler,)])
-        http_server = tornado.httpserver.HTTPServer(application)
-        http_server.listen(ws_port)
-        tornado.ioloop.IOLoop.instance().start()
-        print "WSHandler started"
+        self.ws_port = ws_port
+        self.ws_path = ws_path
 
     def start_consuming(self):
         print "Consuming from '%s'" % self.host
 
         if self.host is None or self.exchange is None:
             return False
+
+        ws_thread = Thread(target=self._ws_listen)
+        ws_thread.start()
+
         self.subscribe_object = Subscribe(self.host, self.message_handler, self.exchange)
         self.subscribe_object.start()
+
+    def _ws_listen(self):
+        # Creating the WS server
+        application = tornado.web.Application([(self.ws_path, WSHandler)])
+        http_server = tornado.httpserver.HTTPServer(application)
+        print "WSHandler started"
+        http_server.listen(self.ws_port)
+        tornado.ioloop.IOLoop.instance().start()
 
     def get_subscribe_object(self):
         return self.subscribe_object
