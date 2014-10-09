@@ -15,7 +15,8 @@ asecret = 'amCBzAKFk7ILALGM9haSYnSbI4WmsxcxFZ4bTFMXraSH3'
 
 keywords = ["bitcoin", "btc", "bitstamp", "bitfinex"]
 
-diff_time = 60
+# 60 seconds * 5 = 5 minutes
+diff_time = 60*5
 
 host = "amqp://cselcik.com"
 exchange = "updates"

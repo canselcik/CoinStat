@@ -8,6 +8,7 @@ import tornado.web
 
 path = r'/main'
 websockets = []
+buffered_history = []
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -18,6 +19,11 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         print "A websocket client connected"
         if self not in websockets:
             websockets.append(self)
+            self.send_buffered_history()
+
+    def send_buffered_history(self):
+        for pair in buffered_history:
+            self.write_message("[%s] (%s) %s" % (pair[0], "twitter-buffer", pair[1]))
 
     def on_message(self, message):
         pass
@@ -31,6 +37,12 @@ def transmit_all_clients(message):
     print "Transmitting data to %d WS clients" % len(websockets)
     for ws in websockets:
         ws.write_message(message)
+
+
+def append_to_buffered_history(pair):
+    if len(buffered_history) == 24 * 60 / 5 - 1:
+        buffered_history = buffered_history[1:]
+    buffered_history.append(pair)
 
 
 class WSRelayConsumer:
@@ -71,7 +83,10 @@ class WSRelayConsumer:
 
     def message_handler(self, message):
         parsed = decode_message(message)
+
         if parsed is not None:
+            # Add to history so that it can be appended
+            buffered_history.append((parsed.get_field('time'), parsed.get_field('message_content')))
             transmit_all_clients("[%s] (%s) %s" % (parsed.get_field('time'),
                                                    parsed.get_field('message_type'),
                                                    parsed.get_field('message_content')))
